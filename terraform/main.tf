@@ -1,5 +1,5 @@
 provider "aws" {
-  region = "us-east-1"
+  region  = "us-east-1"
   profile = "Dev"
 }
 
@@ -17,7 +17,7 @@ resource "local_file" "ssh_pub_key" {
 
 # ec2 key pair
 resource "aws_key_pair" "practice_ec2_key" {
-  key_name = "test_ssh_key"
+  key_name   = "test_ssh_key"
   public_key = tls_private_key.ssh_key.public_key_openssh
 }
 
@@ -33,12 +33,12 @@ resource "aws_security_group" "practice_ec2_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-    ingress {
-        from_port   = 80
-        to_port     = 80
-        protocol    = "tcp"
-        cidr_blocks = ["0.0.0.0/0"]
-    }
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 
   ingress {
     from_port   = 5000
@@ -92,6 +92,9 @@ resource "aws_instance" "practice_ec2" {
             cd /home/ec2-user/
             git clone https://github.com/jamesyoung-15/Prometheus-Grafana-Flask-Web-Server
             cd Prometheus-Grafana-Flask-Web-Server
-            docker-compose up -d
+            PUBLIC_IP=$(curl -s ipinfo.io/ip)
+
+            echo -e "global:\n  scrape_interval: 15s\nscrape_configs:\n  - job_name: 'python-web-server'\n    static_configs:\n      - targets: ['$PUBLIC_IP:5000']" > prometheus.yml
+            sudo docker-compose up -d
             EOF
 }
