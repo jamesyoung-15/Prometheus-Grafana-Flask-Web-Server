@@ -1,0 +1,9 @@
+# template
+
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'python-web-server'
+    static_configs:
+      - targets: ['localhost:5000'] # Replace with the EC2 instance's public IP
