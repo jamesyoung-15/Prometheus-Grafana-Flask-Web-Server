@@ -37,3 +37,6 @@ override.tf.json
 terraform.rc
 
 __pycache__/
+.pytest_cache
+
+id_rsa.pub
